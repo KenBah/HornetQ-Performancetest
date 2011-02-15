@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- ====================================================================== 
+     11.02.2011 15:46:06                                                        
+     HornetQ PerformanceTest                       
+     keb                                                                
+     ====================================================================== -->
+<project name="HornetQ PerformanceTest" default="setup_environment" basedir=".">
+	<description>
+            This ant-file is for setting up the test environment and runnig the performance test.
+    </description>
+
+	<property name="hornetq.home" value="./hornetq/hornetq-2.1.2.Final" />
+	<property name="hornetq.home.bin" value="${hornetq.home}/bin" />
+	<property name="hornetq.home.lib" value="${hornetq.home}/lib" />
+	<property name="jmeter.home" value="./jmeter/jakarta-jmeter-2.4" />
+	<property name="jmeter.home.bin" value="${jmeter.home}/bin" />
+	<property name="jmeter.home.lib" value="${jmeter.home}/lib" />
+
+
+	<target name="make_dirs">
+		<mkdir dir="./download" />
+		<mkdir dir="./jmeter" />
+		<mkdir dir="./hornetq" />
+	</target>
+
+	<target name="clean_all">
+		<delete dir="./download" />
+		<delete dir="./jmeter" />
+		<delete dir="./hornetq" />
+	</target>
+
+	<target name="setup_environment" depends="make_dirs">
+		<get dest="./download/hornetq.zip" src="http://downloads.sourceforge.net/project/hornetq/2.1.2.FINAL/hornetq-2.1.2.Final.zip" />
+		<get dest="./download/jmeter.zip" src="http://artfiles.org/apache.org/jakarta/jmeter/binaries/jakarta-jmeter-2.4.zip" />
+		<unzip src="./download/hornetq.zip" dest="./hornetq" />
+		<unzip src="./download/jmeter.zip" dest="./jmeter" />
+		<antcall target="prepare_jmeter" />
+	</target>
+
+	<target name="prepare_jmeter">
+		<copy file="${hornetq.home.lib}/hornetq-core-client.jar" tofile="${jmeter.home.lib}/hornetq-core-client.jar" />
+		<copy file="${hornetq.home.lib}/netty.jar" tofile="${jmeter.home.lib}/netty.jar" />
+		<copy file="${hornetq.home.lib}/hornetq-jms-client.jar" tofile="${jmeter.home.lib}/hornetq-jms-client.jar" />
+		<copy file="${hornetq.home.lib}/jboss-jms-api.jar" tofile="${jmeter.home.lib}/jboss-jms-api.jar" />
+		<copy file="${hornetq.home.lib}/jnp-client.jar" tofile="${jmeter.home.lib}/jnp-client.jar" />
+		<copy file="./config/jndi.jar" tofile="${jmeter.home.lib}/jndi.jar" />
+	</target>
+
+	<target name="start_hornetq">
+		<echo message="${os.name}" />
+		<property name="unix.arg" value="run.sh  ../config/stand-alone/non-clustered" />
+		<property name="windows.arg" value="/c run.bat ..\\config\\stand-alone\\non-clustered" />
+		<!-- start the 1st clustered server with default configuration -->
+		<exec dir="${hornetq.home.bin}" executable="sh" osfamily="unix">
+			<arg line="${unix.arg}" />
+		</exec>
+		<exec dir="${hornetq.home.bin}" executable="cmd" osfamily="windows">
+			<arg line="${windows.arg}" />
+		</exec>
+	</target>
+
+	<target name="stop_hornetq">
+		<exec dir="${hornetq.home.bin}" executable="sh" osfamily="unix">
+			<arg line="stop.sh ../config/stand-alone/non-clustered" />
+		</exec>
+		<exec dir="${hornetq.home.bin}" executable="cmd" osfamily="windows">
+			<arg line="/c stop.bat ..\\config\\stand-alone\\non-clustered" />
+		</exec>
+	</target>
+
+	<target name="start_environment">
+		<parallel>
+			<sequential>
+				<antcall target="start_hornetq" />
+			</sequential>
+			<sequential>
+				<sleep seconds="12" />
+				<antcall target="start_jmeter" />
+			</sequential>
+		</parallel>
+
+	</target>
+
+	<target name="start_jmeter">
+
+		<echo message="Starting Jmeter" />
+		<property name="unix.arg" value="jmeter-n.sh ../../../test-scripts/JMS_Publisher.jmx" />
+
+		<property name="windows.arg" value="/c jmeter.bat -n -t ..\..\..\test-scripts\JMS_Publisher.jmx -l .\run1 -j .\jmeter_run1.log" />
+
+
+		<exec dir="${jmeter.home.bin}" executable="sh" osfamily="unix">
+			<arg line="${unix.arg}" />
+		</exec>
+		<exec dir="${jmeter.home.bin}" executable="cmd" osfamily="windows">
+			<arg line="${windows.arg}" />
+		</exec>
+		<echo message="Jmeter finished" />
+		<antcall target="stop_hornetq"/>
+	</target>
+
+	<target name="stop_jmeter">
+		<property name="unix.arg" value="shutdown.sh" />
+		<property name="windows.arg" value="shutdown.cmd" />
+		<exec dir="${jmeter.home.bin}" executable="sh" osfamily="unix">
+			<arg line="${unix.arg}" />
+		</exec>
+		<exec dir="${jmeter.home.bin}" executable="cmd" osfamily="windows">
+			<arg line="${windows.arg}" />
+		</exec>
+	</target>
+
+
+</project>

@@ -1,0 +1,10 @@
+1. Vorbedingung
+
+Installiere ANT und stelle sicher, dass ANT_HOME als Umgebungsvariable gesetzt ist.
+
+Installationsanleitung: 
+
+
+2. Führe auf der Konsole ant setup_environment aus.
+
+3. Führe auf der Konsole ant start_environment aus.
