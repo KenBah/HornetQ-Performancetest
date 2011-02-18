@@ -6,32 +6,32 @@
      ====================================================================== -->
 <project name="HornetQ PerformanceTest" default="setup_environment" basedir=".">
 	<description>
-            This ant-file is for setting up the test environment and runnig the performance test.
+        Mit dieser build.xml kann man eine Testumgebung für HornetQ aufbauen und einen Lasttest mit Jmeter ausführen.
     </description>
-
-	<property name="hornetq.home" value="./hornetq/hornetq-2.1.2.Final" />
-	<property name="hornetq.home.bin" value="${hornetq.home}/bin" />
-	<property name="hornetq.home.lib" value="${hornetq.home}/lib" />
-	<property name="jmeter.home" value="./jmeter/jakarta-jmeter-2.4" />
-	<property name="jmeter.home.bin" value="${jmeter.home}/bin" />
-	<property name="jmeter.home.lib" value="${jmeter.home}/lib" />
+	
+	<property file="build.properties" />
+	<property file="perfTest.properties" />
 
 
-	<target name="make_dirs">
+	<target name="make_dirs" depends="clean_all">
 		<mkdir dir="./download" />
 		<mkdir dir="./jmeter" />
 		<mkdir dir="./hornetq" />
+		<mkdir dir="./results" />
+		<mkdir dir="./logs" />
 	</target>
 
 	<target name="clean_all">
 		<delete dir="./download" />
 		<delete dir="./jmeter" />
 		<delete dir="./hornetq" />
+		<delete dir="./results" />
+		<delete dir="./logs" />
 	</target>
 
 	<target name="setup_environment" depends="make_dirs">
-		<get dest="./download/hornetq.zip" src="http://downloads.sourceforge.net/project/hornetq/2.1.2.FINAL/hornetq-2.1.2.Final.zip" />
-		<get dest="./download/jmeter.zip" src="http://artfiles.org/apache.org/jakarta/jmeter/binaries/jakarta-jmeter-2.4.zip" />
+		<get dest="./download/hornetq.zip" src="${hornetq.download.url}" />
+		<get dest="./download/jmeter.zip" src="${jmeter.download.url}" />
 		<unzip src="./download/hornetq.zip" dest="./hornetq" />
 		<unzip src="./download/jmeter.zip" dest="./jmeter" />
 		<antcall target="prepare_jmeter" />
@@ -43,7 +43,7 @@
 		<copy file="${hornetq.home.lib}/hornetq-jms-client.jar" tofile="${jmeter.home.lib}/hornetq-jms-client.jar" />
 		<copy file="${hornetq.home.lib}/jboss-jms-api.jar" tofile="${jmeter.home.lib}/jboss-jms-api.jar" />
 		<copy file="${hornetq.home.lib}/jnp-client.jar" tofile="${jmeter.home.lib}/jnp-client.jar" />
-		<copy file="./config/jndi.jar" tofile="${jmeter.home.lib}/jndi.jar" />
+		<copy file="./jmeter_jndi_config/jndi.jar" tofile="${jmeter.home.lib}/jndi.jar" />
 	</target>
 
 	<target name="start_hornetq">
@@ -68,7 +68,7 @@
 		</exec>
 	</target>
 
-	<target name="start_environment">
+	<target name="run_load_test">
 		<parallel>
 			<sequential>
 				<antcall target="start_hornetq" />
@@ -78,17 +78,13 @@
 				<antcall target="start_jmeter" />
 			</sequential>
 		</parallel>
-
 	</target>
 
 	<target name="start_jmeter">
-
-		<echo message="Starting Jmeter" />
-		<property name="unix.arg" value="jmeter-n.sh ../../../test-scripts/JMS_Publisher.jmx" />
-
-		<property name="windows.arg" value="/c jmeter.bat -n -t ..\..\..\test-scripts\JMS_Publisher.jmx -l .\run1 -j .\jmeter_run1.log" />
-
-
+		<echo message="Runnig JMeter load test....please wait..." />
+		<replace file="./test-scripts/${jmeter.testfile}" token="@@DEFAULT_FILE@@" value="..\\..\\..\\test-scripts\\${jmeter.testMessage}"/>
+		<property name="unix.arg" value="jmeter-n.sh ../../../test-scripts/HQ_Perf_Test.jmx" />
+		<property name="windows.arg" value="/c jmeter.bat -n -t ..\..\..\test-scripts\${jmeter.testfile} -l ..\..\..\results\run-.xml -j ..\..\..\logs\jmeter.log -q ..\..\..\perfTest.properties" />
 		<exec dir="${jmeter.home.bin}" executable="sh" osfamily="unix">
 			<arg line="${unix.arg}" />
 		</exec>
@@ -96,6 +92,7 @@
 			<arg line="${windows.arg}" />
 		</exec>
 		<echo message="Jmeter finished" />
+		<replace file="./test-scripts/${jmeter.testfile}" token="..\\..\\..\\test-scripts\\${jmeter.testMessage}" value="@@DEFAULT_FILE@@"/>
 		<antcall target="stop_hornetq"/>
 	</target>
 
@@ -109,6 +106,5 @@
 			<arg line="${windows.arg}" />
 		</exec>
 	</target>
-
 
 </project>
