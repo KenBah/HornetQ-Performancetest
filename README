@@ -5,7 +5,7 @@
 
 	Installiere ANT und stelle sicher, dass ANT_HOME als Umgebungsvariable gesetzt ist.
 
-	Installationsanleitung: 
+	Installationsanleitung: http://ant.apache.org/manual/install.html#installing
 
 
 - 	Fuehre auf der Konsole ant setup_environment aus.
@@ -18,7 +18,7 @@
 	/*Zur Zeit existiert nur dieser eine JMeter-Test*/
 	jmeter.testfile=HQ_Perf_Test.jmx 
 	
-	/*Im Repository sind zusätzlich message_1MB.txt und message_3MB.txt verfuegbar */
+	/*Im Repository sind zusaetzlich message_1MB.txt und message_3MB.txt verfuegbar */
 	jmeter.testMessage=message_4KB.txt 
 	
 	/* Anzahl der Nachrichten die gesendet und empfangen werden sollen*/
