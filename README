@@ -36,4 +36,7 @@
 	In dem Ordner logs wird das JMeter-Log gespeichert. Dadurch kann Ueberprueft werden, ob zur Laufzeit 
 	des Lasttests ein Fehler in JMeter aufgetreten ist.
 	
+	
+-	Mit dem ANT-Target clean_all können alle Installations- und Arbeitsverzeichnisse gelöscht werden.
+	
 
