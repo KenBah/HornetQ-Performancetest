@@ -1,10 +1,39 @@
-1. Vorbedingung
-
-Installiere ANT und stelle sicher, dass ANT_HOME als Umgebungsvariable gesetzt ist.
-
-Installationsanleitung: 
+18.02.2011 KenBah
 
 
-2. Führe auf der Konsole ant setup_environment aus.
+- Vorbedingung
 
-3. Führe auf der Konsole ant start_environment aus.
+	Installiere ANT und stelle sicher, dass ANT_HOME als Umgebungsvariable gesetzt ist.
+
+	Installationsanleitung: 
+
+
+- 	Fuehre auf der Konsole ant setup_environment aus.
+	In diesem Schritt wird eine Testumgebung mit HornetQ und JMeter aufgesetzt.
+
+
+-	Der Lasttest wird in der Datei perfTest.properties konfiguriert.
+	Folgende Parameter können bei Bedarf gesetzt werden:
+	
+	/*Zur Zeit existiert nur dieser eine JMeter-Test*/
+	jmeter.testfile=HQ_Perf_Test.jmx 
+	
+	/*Im Repository sind zusätzlich message_1MB.txt und message_3MB.txt verfügbar */
+	jmeter.testMessage=message_4KB.txt 
+	
+	/* Anzahl der Nachrichten die gesendet und empfangen werden sollen*/
+	jmeter.numberOfMessages=1000
+	
+	/* Anzahl der Producer und Consumer */
+	jmeter.numberOfProducer=1
+	jmeter.numberOfConsumer=1
+
+
+- 	Fuehre auf der Konsole ant run_load_test aus.
+	Dadurch wird der Lasttest ausgelöst. Die Ergebnisse des Lasttestes werden in dem 
+	Ordner results hinterlegt. Zur Zeit existiert kein grafische Darstellung der Ergebnisse.
+	
+	In dem Ordner logs wird das JMeter-Log gespeichert. Dadurch kann überprüft werden, ob zur Laufzeit 
+	des Lasttests ein Fehler in JMeter aufgetreten ist.
+	
+
