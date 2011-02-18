@@ -13,12 +13,12 @@
 
 
 -	Der Lasttest wird in der Datei perfTest.properties konfiguriert.
-	Folgende Parameter können bei Bedarf gesetzt werden:
+	Folgende Parameter koennen bei Bedarf gesetzt werden:
 	
 	/*Zur Zeit existiert nur dieser eine JMeter-Test*/
 	jmeter.testfile=HQ_Perf_Test.jmx 
 	
-	/*Im Repository sind zusätzlich message_1MB.txt und message_3MB.txt verfügbar */
+	/*Im Repository sind zusätzlich message_1MB.txt und message_3MB.txt verfuegbar */
 	jmeter.testMessage=message_4KB.txt 
 	
 	/* Anzahl der Nachrichten die gesendet und empfangen werden sollen*/
@@ -30,10 +30,10 @@
 
 
 - 	Fuehre auf der Konsole ant run_load_test aus.
-	Dadurch wird der Lasttest ausgelöst. Die Ergebnisse des Lasttestes werden in dem 
+	Dadurch wird der Lasttest ausgeloest. Die Ergebnisse des Lasttestes werden in dem 
 	Ordner results hinterlegt. Zur Zeit existiert kein grafische Darstellung der Ergebnisse.
 	
-	In dem Ordner logs wird das JMeter-Log gespeichert. Dadurch kann überprüft werden, ob zur Laufzeit 
+	In dem Ordner logs wird das JMeter-Log gespeichert. Dadurch kann Ueberprueft werden, ob zur Laufzeit 
 	des Lasttests ein Fehler in JMeter aufgetreten ist.
 	
 
